@@ -1,2 +1,3 @@
 # Thin-film-reconstructor
-MATLAB code to reconstruct fluid thin films between a deformable object and a flat, solid substrate from interferometry data
+MATLAB code to reconstruct fluid thin films between a deformable object and a flat, solid substrate from dual-wave interferometry data. This code uses 4 scripts that, in sequence, radially average interference data, normalise data branch-wise, identify maxima and minima and then assign a film thickness. Absolute thickness is determined by comparing intensity values between differnt colours. These data can be captured on a single colour camera in Raw16 format by separating the colour channels in a process known as "debayering". Code to debayer Raw16 data is also supplied on SMaC-3. 
+
