@@ -104,12 +104,13 @@ end
 
 %Averages the data in the bins, and plots it
 binaverage = bintotal./binindex;
-% bins = bins.';
-% binaverage = binaverage.';
+bins = bins.';
+binaverage = binaverage.';
 
-figure(4)
+figure(2)
 hold on
 scatter(bins, binaverage)
+hold off
 
 dataTable = table(bins, binaverage);
 % 
