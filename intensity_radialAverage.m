@@ -5,7 +5,7 @@
 % Annular data extraction %
 % --------------------------------------------------------------------------
 
-function [bins, binaverage, dataTable] = intensity_radialAverage(img_data, center)
+function [bins, binaverage, dataTable] = intensity_radialAverage(img_data, center, ang_min, ang_max)
 
 % Set center of interference pattern using x and y index as determined by
 % circular Hough transform
@@ -43,21 +43,26 @@ scatter(cx,cy)
 %Capture points that fall within r_max based on their radius from (xcentre,
 %ycentre)
 
-I_rad = radius<r_max;
-rad = radius(I_rad);
-xx_recent = xx(I_rad)-xcentre; % +1?
-yy_recent = (yy(I_rad)-ycentre)*-1; % +1?
-rad_col = xx(I_rad)+1;
-rad_row = yy(I_rad)+1;
-rad_val = img_data(I_rad);
+xx_cent = xx-xcentre; % +1?
+yy_cent = yy-ycentre; % +1?
 
-ang = zeros(length(rad_row),1);
-for i = 1:length(rad_row)
-if yy_recent(i) > 0
-    ang(i) = atan(xx_recent(i)/yy_recent(i));
-elseif yy_recent(i) < 0
-    ang(i) = atan(xx_recent(i)/yy_recent(i)) + pi;    
-end
+div = yy_cent./xx_cent;
+ang = atan(div);
+ang(:,1:center(1)) = ang(:,1:center(1)) + pi;
+ang(1:center(2),center(1)+1:end) = ang(1:center(2),center(1)+1:end)+(2*pi);
+ang = ang.*(180/pi); % convert to degrees
+
+% ang_min = -180;
+% ang_max = 0;
+
+if ang_max > 360
+    I_ang = ang >= ang_min & ang <= 360 | ang >= 0 & ang <= (ang_max-360);
+elseif ang_min < 0
+    ang_min = ang_min + 360;
+    ang_max = ang_max + 360;
+    I_ang = ang >= ang_min & ang <= 360 | ang >= 0 & ang <= (ang_max-360);
+else
+    I_ang = ang >= ang_min & ang <= ang_max;
 end
 
 %Plots the sectioned data
@@ -73,6 +78,14 @@ end
 % end
 
 % Sort data in order of increasing radius
+
+I_rad_a = radius<r_max;
+I_rad = I_rad_a & I_ang;
+imshow(I_rad);
+rad = radius(I_rad);
+rad_col = xx(I_rad)+1;
+rad_row = yy(I_rad)+1;
+rad_val = img_data(I_rad);
 
 [rad, I_rad] = sort(rad);
 rad_col = rad_col(I_rad);

@@ -22,6 +22,8 @@ imshow(img_data)
 %--------------------------------------------------------------------------
 % Perform radial intensity average for all data using above center value. 
 %--------------------------------------------------------------------------
+ang_min = -90; % angle in degrees
+ang_max = -10;
 
 pix_red = cell(num_imgs,1);
 red_int = cell(num_imgs,1);
@@ -32,9 +34,9 @@ blue_int = cell(num_imgs,1);
 for i =  1:num_imgs
     % TO DO: convert to  actual loop when more than one file is selected
     [pix_red{i}, red_int{i}, ~] = intensity_radialAverage(red_data{i},...
-       center);
+       center, ang_min, ang_max);
     [pix_blue{i}, blue_int{i}, ~] = intensity_radialAverage(blue_data{i},...
-        center);
+        center, ang_min, ang_max);
 end
 
 %--------------------------------------------------------------------------
