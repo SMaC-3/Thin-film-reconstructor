@@ -1,8 +1,21 @@
 function [ind_sort,  sp_sorted] = intensity_maxMin(pixels, int_data)
-minPeak = (nanmean(int_data) - nanmin(int_data))*0.5;
-[min_pks, I_min_pks] = findpeaks(-int_data, 'MinPeakProminence',minPeak,'MinPeakDistance',10);
+minPeak = (nanmean(int_data) - nanmin(int_data))*0.25;
+[min_pks, I_min_pks] = findpeaks(-int_data,...
+    'MinPeakProminence',minPeak);
 min_pks = -min_pks;
-[max_pks, I_max_pks] = findpeaks(int_data, 'MinPeakProminence',minPeak,'MinPeakDistance',10);
+[max_pks, I_max_pks] = findpeaks(int_data,...
+    'MinPeakProminence',minPeak);
+
+cutoff = 15;
+
+min_cut = I_min_pks>cutoff;
+max_cut = I_max_pks>cutoff;
+
+min_pks = min_pks(min_cut);
+I_min_pks = I_min_pks(min_cut);
+
+max_pks = max_pks(max_cut);
+I_max_pks = I_max_pks(max_cut);
 
 figure(3)
 hold on

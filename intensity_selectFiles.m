@@ -33,8 +33,8 @@ red_data = cell(num_imgs,1);
 blue_data = cell(num_imgs,1);
 
 for i =1:num_imgs
-   red_data{i} = imread(red_files{i}); 
-   blue_data{i} = imread(blue_files{i});
+   red_data{i} = imread(strcat(red_path, red_files{i})); 
+   blue_data{i} = imread(strcat(blue_path, blue_files{i}));
 end
 end
 

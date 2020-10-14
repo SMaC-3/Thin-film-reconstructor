@@ -9,7 +9,7 @@ function [bins, binaverage, dataTable] = intensity_radialAverage(img_data, cente
 
 % Set center of interference pattern using x and y index as determined by
 % circular Hough transform
-
+center = round(center);
 xcentre=center(1);
 ycentre=center(2);
 
@@ -96,7 +96,7 @@ rad_val = double(rad_val);
 %Binning the data
 %Setting the bins
 
-nbs = 500;
+nbs = 250;
 delr = r_max/nbs;
 bins = linspace(0,r_max,nbs);
 

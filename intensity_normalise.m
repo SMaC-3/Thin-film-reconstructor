@@ -1,5 +1,6 @@
 function [norm_int] = intensity_normalise(sp, sp_ind, int_data)
 
+
 norm_int = zeros(length(int_data),1);
 for i = 1:length(sp)-1
     if i == 1
