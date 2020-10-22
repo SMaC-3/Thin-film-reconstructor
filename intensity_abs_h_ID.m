@@ -1,4 +1,4 @@
-function [dimp_h_red, dimp_h_blue] = intensity_abs_h_ID(pixels, norm_int, ind_int, dimp_ind)
+function [dimp_h_red, dimp_h_blue, save_abs_h] = intensity_abs_h_ID(pixels, norm_int, ind_int, dimp_ind)
 
 pix_red = pixels(:,1);
 norm_red = norm_int(:,1);
@@ -100,5 +100,7 @@ hold on
 scatter(pix_blue(ind_blue(1:dimp_blue)), dimp_h_blue, 100, 'blue', 'filled')
 scatter(-pix_red(ind_red(1:dimp_red)), dimp_h_red, 100, 'red', 'filled')
 scatter(-pix_blue(ind_blue(1:dimp_blue)), dimp_h_blue, 100, 'blue', 'filled')
+
+save_abs_h = [lamb_red, lamb_blue, n1, seq_n];
 end
 

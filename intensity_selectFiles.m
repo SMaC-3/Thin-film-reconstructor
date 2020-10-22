@@ -1,4 +1,4 @@
-function [red_data, blue_data, num_imgs] = intensity_selectFiles()
+function [red_data, red_files, blue_data, blue_files, num_imgs] = intensity_selectFiles()
 
 disp('Select red image files');
 [red_files, red_path] = uigetfile('*.tiff',...

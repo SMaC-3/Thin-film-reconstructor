@@ -5,7 +5,7 @@
 % Annular data extraction %
 % --------------------------------------------------------------------------
 
-function [bins, binaverage, dataTable] = intensity_radialAverage(img_data, center, ang_min, ang_max)
+function [bins, binaverage, r_max] = intensity_radialAverage(img_data, center, ang_min, ang_max)
 
 % Set center of interference pattern using x and y index as determined by
 % circular Hough transform
@@ -81,6 +81,7 @@ end
 
 I_rad_a = radius<r_max;
 I_rad = I_rad_a & I_ang;
+figure(2)
 imshow(I_rad);
 rad = radius(I_rad);
 rad_col = xx(I_rad)+1;
@@ -119,13 +120,13 @@ end
 binaverage = bintotal./binindex;
 bins = bins.';
 binaverage = binaverage.';
+% 
+% figure(2)
+% hold on
+% scatter(bins, binaverage, 100, 'black','filled')
+% hold off
 
-figure(2)
-hold on
-scatter(bins, binaverage)
-hold off
-
-dataTable = table(bins, binaverage);
+% dataTable = table(bins, binaverage);
 % 
 % if saveSet == 1
 %     folder = '2D_annular_sector_extraction/Annular/';
