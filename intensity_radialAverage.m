@@ -15,7 +15,7 @@ ycentre=center(2);
 
 % Set size of radius in pixels;
 
-r_max = 300;
+r_max = 200;
 
 %Calculate the magnitude of distance of each point in graph from centre
 rows = 1024;
@@ -97,9 +97,27 @@ rad_val = double(rad_val);
 %Binning the data
 %Setting the bins
 
-nbs = 250;
+nbs = round(0.75*r_max);
 delr = r_max/nbs;
 bins = linspace(0,r_max,nbs);
+
+
+% exp_max = log(r_max);
+% loge_lin = exp(linspace(0, exp_max, nbs));
+% loge_diff = flip(diff(loge_lin));
+% bins = zeros(1,nbs);
+% bins(1) = 0;
+% for i = 1:nbs-1
+%     bins(i+1) = bins(i)+loge_diff(i);
+% end
+% 
+% log_bins = logspace(0,log10(300) , nbs);
+% log_diff = flip(diff(log_bins));
+% bins = zeros(1,nbs);
+% bins(1) = 0;
+% for i = 1:nbs-1
+%     bins(i+1) = bins(i)+log_diff(i);
+% end
 
 %Filling the bins
 binindex = zeros(1,nbs);

@@ -1,16 +1,12 @@
 %--------------------------------------------------------------------------
 % intensity_profileExtractor perfroms the following sequence of functions:
-% - Reads image data of selected *.tiff files (2048x2048)
+% - Reads image data of selected *.raw files (2048x2048, unit16)
 % - Takes Hough transform of 1st red image to ID centre of interference
-%   pattern
-%
+% pattern
 % Then, looping through pairs of blue & red images
-% - Extracts radially averaged intensity 
-% - Identifies the maxima & minima in intensity profile
-% - Identifies dimple region via user prompt
-% - Normalises intensity profile branch-wise
-% - Assigns absolute film thicknesss by comparison between blue & red
-%   intensity
+
+
+
 %--------------------------------------------------------------------------
 
 % close all; clear all

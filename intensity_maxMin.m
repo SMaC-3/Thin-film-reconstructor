@@ -1,5 +1,5 @@
 function [ind_sort,  sp_sorted, save_maxMin] = intensity_maxMin(pixels, int_data)
-minPeak = (nanmean(int_data) - nanmin(int_data))*0.15;
+minPeak = (nanmean(int_data) - nanmin(int_data))*0.05;
 [min_pks, I_min_pks] = findpeaks(-int_data,...
     'MinPeakProminence',minPeak);
 min_pks = -min_pks;
