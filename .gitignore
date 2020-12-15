@@ -4,6 +4,8 @@
 /Legacy
 /MatlabExport
 /Test data
+/researchUpdate
+testVars.mat
 *.raw
 *.tiff
 *.png
