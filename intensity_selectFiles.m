@@ -1,4 +1,20 @@
-function [red_data, red_files, blue_data, blue_files, num_imgs] = intensity_selectFiles()
+function [red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = intensity_selectFiles()
+% intensity_selectFiles.m Loads image data from red and blue channels (from
+% debayered images)
+%   This function prompts the user to select image files corresponding to
+%   red and blue colour channels from previously debayered interferometry
+%   images. Files should be in .tiff format. Image file data is then read
+%   by the function
+%   
+%   Inputs:
+%       Nill
+%   Outputs:
+%       red_data: intensity at each pixel for all selected red image files
+%       red_files: file paths for all selected red image files
+%       blue_data: intensity at each pixel for all selected blue image files
+%       blue_files: file paths for all selected blue image files
+%       num_imgs: number of images slected per colour channel (eg. at
+%       distinct time points)
 
 disp('Select red image files');
 [red_files, red_path] = uigetfile('*.tiff',...
