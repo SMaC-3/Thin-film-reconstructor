@@ -1,3 +1,4 @@
+/calibrationimages
 /ImageExport
 /Interferometry data
 /Interferometry imgs
@@ -10,3 +11,5 @@ testVars.mat
 *.tiff
 *.png
 *.txt
+*.zip
+*.xlsx
