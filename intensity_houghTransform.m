@@ -1,9 +1,28 @@
-function [center] = intensity_houghTransform(img_data)
+function [center, radius] = intensity_houghTransform(img_data)
+% intensity_houghTransform.m Performs a hough transform to identify circles
+% in provided image data
+%   Inputs:
+%       img_data: intensity vs pixel of an image containing circles to be
+%       identified
+%   Outputs:
+%       center: x,y co-ordinates of the center of circle as identified by
+%       user
+
+
+
+%--------------------------------------------------------------------------
+%   User adjustable parameters
+%--------------------------------------------------------------------------
+
 object = 'bright';
 sensitivity = 0.985;
 
 r1 = 120;
 r2 = 180;
+
+%--------------------------------------------------------------------------
+%   End user adjustable parameters
+%--------------------------------------------------------------------------
 
 [centers, radii] = imfindcircles(img_data, [r1, r2],...
     'ObjectPolarity',object, 'Sensitivity',sensitivity);
@@ -24,5 +43,6 @@ prompt2 = 'Select the index corresponding a correct circle: ';
 p2 = input(prompt2);
 
 center = centers(p2,:);
+radius = radii(p2,:);
 end
 
