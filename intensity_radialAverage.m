@@ -5,7 +5,7 @@
 % Annular data extraction %
 % --------------------------------------------------------------------------
 
-function [bins, binaverage, r_max] = intensity_radialAverage(img_data, center, ang_min, ang_max)
+function [bins, binaverage, r_max] = intensity_radialAverage(img_data, center, ang_min, ang_max, r_max, nbs)
 
 % Set center of interference pattern using x and y index as determined by
 % circular Hough transform
@@ -15,7 +15,7 @@ ycentre=center(2);
 
 % Set size of radius in pixels;
 
-r_max = 200;
+% r_max = 250;
 
 %Calculate the magnitude of distance of each point in graph from centre
 rows = 1024;
@@ -97,7 +97,18 @@ rad_val = double(rad_val);
 %Binning the data
 %Setting the bins
 
-nbs = round(0.75*r_max);
+area = pi*r_max^2;
+
+% nbs = round(1*r_max);
+
+% area_bin = area/nbs;
+% bins = zeros(1, nbs);
+% bins(2) = sqrt(area_bin/pi);
+% 
+% for i = 3:nbs
+%     bins(i) = sqrt((area_bin/(pi*bins(i-1)^2)+1))*bins(i-1);
+% end
+
 delr = r_max/nbs;
 bins = linspace(0,r_max,nbs);
 
