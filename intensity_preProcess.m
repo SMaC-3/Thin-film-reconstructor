@@ -6,8 +6,17 @@ format bank
 % will be extracted.
 %--------------------------------------------------------------------------
 
-[red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = intensity_selectFiles();
 
+folder = '/Users/jkin0004/Documents/PhD_local/3wtCNC_run5/'; 
+csvFile = '3wtCNC_run5_TimeStamps.csv';
+
+
+
+selected = [170:700];
+
+[red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = findFile(folder, csvFile, selected);
+
+%[red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = intensity_selectFiles();
 
 % red_files = {'researchUpdate/red_TX100-1-00350.tiff'};
 % blue_files = {'researchUpdate/blue_TX100-1-00350.tiff'};
@@ -27,8 +36,9 @@ imshow(img_data)
 % constant
 %--------------------------------------------------------------------------
 
-[center, radius] = intensity_houghTransform(img_data);
-% center = [472,531];
+% [center, radius] = intensity_houghTransform(img_data);
+center = [261.47        ,254.98];
+radius = [63.73];
 
 figure(1)
 hold on
@@ -53,9 +63,9 @@ end
 end
 
 tic
-if isempty(gcp('nocreate'))
-    parpool
-end
+% if isempty(gcp('nocreate'))
+%     parpool
+% end
 
 parfor ii = 1:num_imgs
     red_img = red_data{ii};
@@ -75,8 +85,8 @@ function [pix_red, red_int, pix_blue, blue_int] = preProcess(red_img, blue_img, 
 %--------------------------------------------------------------------------
 % Perform radial intensity average for all data using above center value.
 %--------------------------------------------------------------------------
-ang_min = 90; % angle in degrees
-ang_max = 360;
+ang_min = 170; % angle in degrees
+ang_max = 340;
 r_max = 250;
 % nbs = r_max;
 nbs = round(0.75*r_max);
