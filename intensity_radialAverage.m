@@ -3,6 +3,8 @@
 
 % --------------------------------------------------------------------------
 % Annular data extraction %
+% angle is measured with respect to the positive x-axis in a clock-wise
+% direction
 % --------------------------------------------------------------------------
 
 function [bins, binaverage, r_max] = intensity_radialAverage(img_data, center, ang_min, ang_max, r_max, nbs)
@@ -18,7 +20,8 @@ ycentre=center(2);
 % r_max = 250;
 
 %Calculate the magnitude of distance of each point in graph from centre
-rows = 1024;
+% rows = 1024;
+rows = 512;
 cols = rows;
 
 x = 1:rows;
