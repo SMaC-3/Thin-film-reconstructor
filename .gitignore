@@ -6,10 +6,14 @@
 /MatlabExport
 /Test data
 /researchUpdate
+/misc
 testVars.mat
 *.raw
 *.tiff
+
+*.tif
 *.png
 *.txt
 *.zip
 *.xlsx
+*.mat
