@@ -17,8 +17,8 @@ function [center, radius] = intensity_houghTransform(img_data)
 object = 'bright';
 sensitivity = 0.985;
 
-r1 = 120;
-r2 = 180;
+r1 = 50;
+r2 = r1+20;
 
 %--------------------------------------------------------------------------
 %   End user adjustable parameters
@@ -39,9 +39,35 @@ disp('circle detected. Showing overlay');
 hold on
 scatter(centers(:,1), centers(:,2))
 disp(centers);
+hold off
 prompt2 = 'Select the index corresponding a correct circle: ';
 p2 = input(prompt2);
 
+while p2 == 0
+    r1_prompt = 'Adjsut r1 value to re-attempt transform: '
+    r1 = input(r1_prompt);
+    
+    [centers, radii] = imfindcircles(img_data, [r1, r2],...
+    'ObjectPolarity',object, 'Sensitivity',sensitivity);
+    
+if isempty(centers)
+    continue
+    
+else
+
+    disp('circle detected. Showing overlay');
+    % viscircles(centers, radii);
+    hold on
+    scatter(centers(:,1), centers(:,2))
+    disp(centers);
+    hold off
+    prompt2 = 'Select the index corresponding a correct circle: ';
+    p2 = input(prompt2);
+    
+end
+
+end
+    
 center = centers(p2,:);
 radius = radii(p2,:);
 end
