@@ -6,7 +6,18 @@ min_pks = -min_pks;
 [max_pks, I_max_pks] = findpeaks(int_data,...
     'MinPeakProminence',minPeak);
 
-cutoff = 15;
+
+figure(2)
+scatter(pixels(I_min_pks), min_pks,200, 'magenta', 'filled')
+hold on
+scatter(pixels(I_max_pks), max_pks,200, 'magenta', 'filled')
+plot(pixels, int_data, 'black', 'LineWidth', 2)
+hold off
+
+trim_1 = 'Enter lower bound for max/min peak identification: ';
+cutoff = input(trim_1);
+
+% cutoff = 20;
 [~,I_cutoff] = min(abs(pixels - cutoff));
 
 min_cut = I_min_pks>I_cutoff;
@@ -18,18 +29,11 @@ I_min_pks = I_min_pks(min_cut);
 max_pks = max_pks(max_cut);
 I_max_pks = I_max_pks(max_cut);
 
-figure(2)
-scatter(pixels(I_min_pks), min_pks,200, 'magenta', 'filled')
-hold on
-scatter(pixels(I_max_pks), max_pks,200, 'magenta', 'filled')
-plot(pixels, int_data, 'black', 'LineWidth', 2)
-hold off
-
 %Trim upper max/min
 
 trim = 'Enter upper bound for max/min peak identification: ';
-% cutoff_2 = input(trim);
-cutoff_2 = 230;
+cutoff_2 = input(trim);
+% cutoff_2 = 195;
 
 [~,I_cutoff_2] = min(abs(pixels - cutoff_2));
 
