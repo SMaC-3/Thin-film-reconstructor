@@ -9,7 +9,18 @@
 %   intensity
 %--------------------------------------------------------------------------
 
-% close all; clear all
+% %figures to keep
+% figs2keep = [6,7,8];
+% 
+% % Uncomment the following to 
+% % include ALL windows, including those with hidden handles (e.g. GUIs)
+% % all_figs = findall(0, 'type', 'figure');
+% 
+% all_figs = findobj(0, 'type', 'figure');
+% delete(setdiff(all_figs, figs2keep));
+
+% close all
+clear all
 
 format bank
 %--------------------------------------------------------------------------
@@ -18,20 +29,62 @@ format bank
 
 % Use a for loop here to go through pairs of red-blue images and save
 % output
-save = 1;
+save = 0;
 
-[red_files, red_path] = uigetfile('*.txt',...
-    'Select the subtracted red-files', 'MultiSelect','on');
-[blue_files, blue_path] = uigetfile('*.txt',...
-    'Select the subtracted blue-files', 'MultiSelect','on');
+% test import code
 
-if iscell(red_files) == 0 
-    red_files = {red_files};
-end
+folder = '/Users/jkin0004/Documents/PhD_local/3wtCNC_run6/'; 
+csvFile = '3wtCNC_run6_TimeStamps.csv';
 
-if iscell(blue_files) == 0 
-    blue_files = {blue_files};
-end
+
+
+red_folder = 'red-tiff/red-1D-int/';
+blue_folder = 'blue-tiff/blue-1D-int/';
+
+red_path = strcat(folder, red_folder);
+blue_path = strcat(folder, blue_folder);
+
+selected = [440, 460, 480, 500, 510];
+% selected = [185];
+selected = flip(selected);
+
+csvRead = strcat(folder, csvFile);
+T = readtable(csvRead, 'Delimiter',',');
+T(end, :) = [];
+
+name = '_int_1D';
+type = '.txt';
+
+nameID = T.Index;
+red_names = T.red_file_names;
+blue_names = T.blue_file_names;
+
+    for i = 1:length(selected)
+    choose(i) = find(nameID==selected(i));
+    end
+    
+    red_files = {red_names{choose}};
+    blue_files = {blue_names{choose}};
+
+    for i = 1:length(red_files)
+    red_files{i} = strcat(red_files{i}(1:end-5), name, type);
+    blue_files{i} = strcat(blue_files{i}(1:end-5), name, type);
+    end
+
+% end test
+
+% [red_files, red_path] = uigetfile('*.txt',...
+%     'Select the subtracted red-files', 'MultiSelect','on');
+% [blue_files, blue_path] = uigetfile('*.txt',...
+%     'Select the subtracted blue-files', 'MultiSelect','on');
+% 
+% if iscell(red_files) == 0 
+%     red_files = {red_files};
+% end
+% 
+% if iscell(blue_files) == 0 
+%     blue_files = {blue_files};
+% end
 
 for ii = 1:size(red_files,2)
     red_file = red_files{ii};
@@ -54,7 +107,14 @@ T_blue = importdata(strcat(blue_path, blue_file),'\t',8);
 pix_blue = T_blue.data(:,1);
 blue_int = T_blue.data(:,3);
 
+
+% Smooth data
+% blue_int = smooth(blue_int);
+
+
+
 [ind_red,  sp_red, max_min_red, save_maxMin_red] = intensity_maxMin(pix_red, red_int);
+% [ind_blue,  sp_blue, max_min_blue, save_maxMin_blue] = intensity_maxMin(pix_blue, blue_int);
 [ind_blue,  sp_blue, max_min_blue, save_maxMin_blue] = intensity_maxMin(pix_blue, blue_int);
 
 %--------------------------------------------------------------------------
@@ -68,6 +128,11 @@ figure(3)
 plot(pix_red, red_int, 'red', 'LineWidth', 2)
 hold on
 scatter(pix_red(ind_red), red_int(ind_red), 200, 'black', 'filled')
+for k = 1:length(ind_red)
+   
+    text(pix_red(ind_red(k)), red_int(ind_red(k))*0.9,num2str(k))
+    
+end
 hold off
 disp([pix_red(ind_red).' ; 1:length(ind_red)])
 prompt3 = 'Identify index of max/min one *before* red dimple: ';
@@ -94,6 +159,12 @@ figure(4)
 plot(pix_blue, blue_int, 'blue', 'LineWidth', 2)
 hold on
 scatter(pix_blue(ind_blue), blue_int(ind_blue), 200, 'black', 'filled')
+
+for k = 1:length(ind_blue)
+   
+    text(pix_blue(ind_blue(k)), blue_int(ind_blue(k))*0.9,num2str(k))
+    
+end
 hold off
 disp([pix_blue(ind_blue).' ; 1:length(ind_blue)])
 % disp(1:length(ind_blue))
@@ -142,9 +213,9 @@ radius_red = pix_red/pixels_um;
 radius_blue = pix_blue/pixels_um;
 
 figure(8)
-scatter(radius_blue, dimp_h_blue, 100, 'blue', 'filled')
+scatter(radius_blue, dimp_h_blue, 'filled')
 hold on
-scatter(-radius_blue, dimp_h_blue, 100, 'blue', 'filled')
+scatter(-radius_blue, dimp_h_blue, 'filled')
 xlabel('Radius (\mu m)');
 ylabel('Film thickness (nm)');
 
