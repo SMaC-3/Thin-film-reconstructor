@@ -46,6 +46,7 @@ p2 = input(prompt2);
 while p2 == 0
     r1_prompt = 'Adjsut r1 value to re-attempt transform: '
     r1 = input(r1_prompt);
+    r2 = r1+20
     
     [centers, radii] = imfindcircles(img_data, [r1, r2],...
     'ObjectPolarity',object, 'Sensitivity',sensitivity);
@@ -57,6 +58,8 @@ else
 
     disp('circle detected. Showing overlay');
     % viscircles(centers, radii);
+    figure(1)
+    imshow(img_data)
     hold on
     scatter(centers(:,1), centers(:,2))
     disp(centers);
