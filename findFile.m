@@ -1,28 +1,45 @@
 function [red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = findFile(folder, csvFile, selected)
-%RELATIVE FILE PATH
-% folder = '/Volumes/Z_MS-DOS/Thin films/MultiCam/CNC/6wtCNC/6wtCNC_run2/'; 
+
+%--------------------------------------------------------------------------
+% Build relative file path
+%--------------------------------------------------------------------------
+
 red_folder = 'red-tiff/';
 blue_folder = 'blue-tiff/';
 
 red_path = strcat(folder, red_folder);
 blue_path = strcat(folder, blue_folder);
 
-% csvFile = '6wtCNC_run2_timestamps.csv';
+%---load csv data----------------------------------------------------------
 csvRead = strcat(folder, csvFile);
 T = readtable(csvRead, 'Delimiter',',');
-T(end, :) = [];
+% T(end, :) = [];
+Tend = find(isnan(T.Index),1);
+T = T(1:Tend-1,1:15);
+%--------------------------------------------------------------------------
 
+%--------------------------------------------------------------------------
+% Define table info
+%--------------------------------------------------------------------------
 nameID = T.Index;
 red_names = T.red_file_names;
 blue_names = T.blue_file_names;
+sample = T.sample;
+cam = T.camera;
+fileNum = T.fileNum;
+secs = T.secs;
+cyCount = T.cyCount;
+cyOff = T.cyOff;
 
+%--------------------------------------------------------------------------
 num_imgs = length(selected);
-
+%--------------------------------------------------------------------------
 if selected == 0
-    filename = names;
-
+    % select all files
+    red_files = red_names;
+    blue_files = blue_names;
+    
 else
-
     for i = 1:length(selected)
     choose(i) = find(nameID==selected(i));
     end
