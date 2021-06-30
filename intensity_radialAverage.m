@@ -39,9 +39,9 @@ theta = linspace(0, 2*pi, 314);
 cx = r_max*cos(theta) + xcentre;
 cy = r_max*sin(theta) + ycentre;
 
-figure(1)
-hold on
-scatter(cx,cy)
+% figure(1)
+% hold on
+% scatter(cx,cy)
 
 %Capture points that fall within r_max based on their radius from (xcentre,
 %ycentre)
@@ -84,8 +84,8 @@ end
 
 I_rad_a = radius<r_max;
 I_rad = I_rad_a & I_ang;
-figure(2)
-imshow(I_rad);
+% figure(2)
+% imshow(I_rad);
 rad = radius(I_rad);
 rad_col = xx(I_rad)+1;
 rad_row = yy(I_rad)+1;
