@@ -16,6 +16,9 @@ hold off
 
 trim_1 = 'Enter lower bound for max/min peak identification: ';
 cutoff = input(trim_1);
+    while isempty(cutoff)
+        cutoff = input(trim_1);
+    end
 
 % cutoff = 20;
 [~,I_cutoff] = min(abs(pixels - cutoff));
@@ -33,6 +36,9 @@ I_max_pks = I_max_pks(max_cut);
 
 trim = 'Enter upper bound for max/min peak identification: ';
 cutoff_2 = input(trim);
+    while isempty(cutoff_2)
+        cutoff_2 = input(trim);
+    end
 % cutoff_2 = 195;
 
 [~,I_cutoff_2] = min(abs(pixels - cutoff_2));
