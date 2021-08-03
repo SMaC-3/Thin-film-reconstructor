@@ -15,7 +15,11 @@ csvRead = strcat(folder, csvFile);
 T = readtable(csvRead, 'Delimiter',',');
 % T(end, :) = [];
 Tend = find(isnan(T.Index),1);
-T = T(1:Tend-1,1:15);
+if ~isempty(Tend)
+    T = T(1:Tend-1,1:15);
+else
+    T = T(1:end,1:15);
+end
 %--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------

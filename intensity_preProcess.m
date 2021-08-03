@@ -6,18 +6,21 @@ format bank
 %--------------------------------------------------------------------------
 
 %---Main branch directory info---------------------------------------------
-conc = '4p5wt';
-sample = 'CNC';
-expNum = 'run10';
+conc = '';
+sample = 'Ethylene_glycol';
+abbre = 'EG';
+expNum = 'run2';
 branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
 
-folder = fullfile(branch, sample, strcat(conc,sample),...
-    strcat(conc,sample,'_',expNum,'/')); 
-csvFile = strcat(conc,sample,'_',expNum,'_TimeStamps.csv');
+folder = fullfile(branch, sample, strcat(conc,abbre),...
+    strcat(conc,abbre,'_',expNum,'/'));
+folder = fullfile(branch, sample,...
+    strcat(conc,abbre,'_',expNum,'/')); 
+csvFile = strcat(conc, abbre,'_',expNum,'_TimeStamps.csv');
 %--------------------------------------------------------------------------
 
 %---Index of files to be procesed------------------------------------------
-selected = [420, 520, 620, 720, 820];
+selected = [500:500:2500];
 % selected = flip(selected);
 save_check = 1; % 1 = save info, 0 = do not save info 
 %--------------------------------------------------------------------------
@@ -91,7 +94,7 @@ if isempty(gcp('nocreate'))
 end
 
 %---Use for single segment reduction---------------------------------------
-for ii = 1:num_imgs
+parfor ii = 1:num_imgs
     red_img = red_data{ii};
     blue_img = blue_data{ii};
     red_file = red_files{ii};
