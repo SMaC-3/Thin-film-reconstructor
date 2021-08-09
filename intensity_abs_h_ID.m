@@ -30,7 +30,8 @@ blue_dimp = find(blue_ind == find(T_data.blue_I_dimp == 1));
 lamb_red = 630;
 lamb_blue = 450;
 % n1 = 1.33; % refractive index of water 
-n1 = 1.43; % refractive index of glycol
+% n1 = 1.43; % refractive index of glycol
+n1 = 1; % refractive index of air
 
 disp(strcat("refractive index ",num2str(n1))  );
 %--------------------------------------------------------------------------
