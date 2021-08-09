@@ -7,26 +7,27 @@ format bank
 %--------------------------------------------------------------------------
 
 %---Index of files to be procesed------------------------------------------
-save_check = 0; % 1 = save info, 0 = do not save info 
+save_check = 1; % 1 = save info, 0 = do not save info 
 %--------------------------------------------------------------------------
 
 %---Set script mode--------------------------------------------------------
-reducer = 1;
-film_reco = 0;
+reducer = 0;
+film_reco = 1;
 %--------------------------------------------------------------------------
 
 %---main branch directory info---------------------------------------------
-conc = '';
-sample = 'Ethylene_glycol';
-abbre = 'EG';
-expNum = 'run2';
-branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
+% conc = '';
+% sample = 'Ethylene_glycol';
+% abbre = 'EG';
+% expNum = 'run1';
+% branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
+% 
+% folder = fullfile(branch, sample, strcat(conc,abbre),...
+%     strcat(conc,abbre,'_',expNum,'/'));
+% folder = fullfile(branch, sample,...
+%     strcat(conc,abbre,'_',expNum,'/')); 
 
-folder = fullfile(branch, sample, strcat(conc,abbre),...
-    strcat(conc,abbre,'_',expNum,'/'));
-folder = fullfile(branch, sample,...
-    strcat(conc,abbre,'_',expNum,'/')); 
-folder='/Volumes/ZIGGY/Thin films/MultiCam/Ethylene_glycol/EG_run2/thin-films-plot/';
+folder='/Users/jkin0004/Google Drive/University/PhD/Research/Thin film model/Thin film experimental/WatchGlass_errorEstimate/';
 
 
 if ~exist(folder,'dir')
@@ -40,7 +41,7 @@ film_data_folder = 'thin-films/';
 film_data_path = strcat(folder, film_data_folder);
 
 if reducer == 1
-    %---Select files  manually for reduction-----------------------------------
+    %---Select files manually for reduction-----------------------------------
     disp("Select red intensity data");
     [red_files, red_path] = uigetfile(strcat(folder,'*.txt'),...
         'Select the subtracted red-files', 'MultiSelect','on');
@@ -73,11 +74,13 @@ if reducer == 1
         
         % saveData function
         
-%         file_parts = split(red_files{i},{'-','_'});
-%         file_name = strcat(file_parts{2},'-',file_parts{3},'-',...
-%             file_parts{4},'-reduced');
-        file_name = strcat(red_files{i}(5:end-4),'-reduced');
-        saveData(T_export, reduced_data_path, file_name);
+        %         file_parts = split(red_files{i},{'-','_'});
+        %         file_name = strcat(file_parts{2},'-',file_parts{3},'-',...
+        %             file_parts{4},'-reduced');
+        if save_check == 1
+            file_name = strcat(red_files{i}(5:end-4),'-reduced');
+            saveData(T_export, reduced_data_path, file_name);
+        end
     end
 
 end
@@ -89,7 +92,7 @@ end
 if film_reco == 1
 
     %---Select files  manually for film reconstruction-------------------------
-    
+    disp('select normalised data');
     [data_files, data_path] = uigetfile(strcat(folder,'*.txt'),...
         'Select the subtracted red-files', 'MultiSelect','on');
     
