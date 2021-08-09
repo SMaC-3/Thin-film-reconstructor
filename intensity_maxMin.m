@@ -52,6 +52,50 @@ I_min_pks = I_min_pks(min_cut_2);
 max_pks = max_pks(max_cut_2);
 I_max_pks = I_max_pks(max_cut_2);
 
+
+% 
+% % Input for gradient correction
+% 
+% 
+% trim_grad_1 = 'Enter lower bound for peak identification for gradient correction (enter -1 to enter gradient correction manually): ';
+% cutoff_grad_1 = input(trim_grad_1);
+% while isempty(cutoff_grad_1)
+%     cutoff_grad_1 = input(trim_grad_1);
+% end
+% 
+% if cutoff_grad_1 == -1
+%     cutoff_grad_2 = -1;
+% else
+%     
+%     trim_grad_2 = 'Enter upper bound for peak identification for gradient correction: ';
+%     cutoff_grad_2 = input(trim_grad_2);
+%     while isempty(cutoff_grad_2)
+%         cutoff_grad_2 = input(trim_grad_2);
+%     end
+% end
+% 
+% % Re-plot with input data
+% 
+% figure(2)
+% scatter(radial_data(I_min_pks), min_pks,200, 'magenta', 'filled')
+% hold on
+% scatter(radial_data(I_max_pks), max_pks,200, 'magenta', 'filled')
+% plot(radial_data, int_data, 'black', 'LineWidth', 2)
+% plot([radial_data(I_cutoff),radial_data(I_cutoff)],[0,max(int_data)],'blue')
+% plot([radial_data(I_cutoff_2),radial_data(I_cutoff_2)],[0,max(int_data)],'blue')
+hold off
+
+% Enter radius of dimple rim
+
+
+
+
+    
+    
+% Manually input SP    
+    
+    
+    
 %End trim
 % 
 % max_min_merge = [zeros(length(I_min_pks),1);...
