@@ -73,9 +73,9 @@ while I_dimp == 0 | I_dimp == -1
         I_sp(find_I) = [];
         sp(find_I) = [];
         
-        is_max = ismember(I_max, find_I);
+        is_max = ismember(I_max, I_sp(find_I));
         I_max(is_max) = [];
-        is_min = ismember(I_min, find_I);
+        is_min = ismember(I_min, I_sp(find_I));
         I_min(is_min) = [];
     
     end
