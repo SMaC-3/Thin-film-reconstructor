@@ -5,7 +5,7 @@ close all
 %--------------------------------------------------------------------------
 
 %---Index of files to be procesed------------------------------------------
-save_check = 0; % 1 = save info, 0 = do not save info 
+save_check = 1; % 1 = save info, 0 = do not save info 
 %--------------------------------------------------------------------------
 
 %---Set script mode--------------------------------------------------------
@@ -138,7 +138,7 @@ if film_analyser == 1
     
     if exist('T_film_plot','var') == 0 || load_check == 0
     load_check = 0;
-        %---Select file manually for film analysis-------------------------
+    %---Select file manually for film analysis-------------------------
         disp('Select the thin film data to analyse (films-plot.txt)');
         [film_plot_file, film_plot_path] = uigetfile(strcat(folder,'*.txt'),...
             'Select the thin film data to analyse', 'MultiSelect','off');
@@ -207,9 +207,11 @@ if film_analyser == 1
     dr = cell(numFilms,1);
     
     dimpArea = zeros(numFilms,1);
-    dimpVol = zeros(numFilms,1);
+    dimpVol = cell(numFilms,1);
     dimpDrainageRate = zeros(numFilms,1);
-    SA_cyl = zeros(numFilms,1);
+    SA_cyl = cell(numFilms,1);
+    
+    flowRate = cell(numFilms,1);
     
     fileNum_plot = zeros(numFilms,1);
     timeStamp_plot = zeros(numFilms,1);
@@ -229,34 +231,38 @@ if film_analyser == 1
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %%% Use trapz approach to improve dimple volume accuracy???
-        
-%         radius_bar{i} = 0.5*(T_film_plot{2:Hmin_I(i),1} + T_film_plot{1:Hmin_I(i)-1,1});
-%         height_bar{i} = 0.5*(T_film_plot{2:Hmin_I(i),i+1} + T_film_plot{1:Hmin_I(i)-1,i+1});
-%         dr{i} = T_film_plot{2:Hmin_I(i),1} - T_film_plot{1:Hmin_I(i)-1,1};
-        
-        radius_bar{i} = 0.5*(T_film_plot{2:Hmin_I(1),1} + T_film_plot{1:Hmin_I(1)-1,1});
-        height_bar{i} = 0.5*(T_film_plot{2:Hmin_I(1),i+1} + T_film_plot{1:Hmin_I(1)-1,i+1});
-        dr{i} = T_film_plot{2:Hmin_I(1),1} - T_film_plot{1:Hmin_I(1)-1,1};
+        radius_bar{i} = 0.5*(T_film_plot{2:end,1} + T_film_plot{1:end-1,1});
+        height_bar{i} = 0.5*(T_film_plot{2:end,i+1} + T_film_plot{1:end-1,i+1});
+        dr{i} = T_film_plot{2:end,1} - T_film_plot{1:end-1,1};
 
+        dimpVol{i}= 2*pi.*radius_bar{i}.*(height_bar{i}/1000).*dr{i};
 
-        dimpVol(i) = sum(2*pi.*radius_bar{i}.*(height_bar{i}/1000).*dr{i});
-        
-%         dimpVol(i) = sum(pi.*(T_film_plot{1:Hmin_I(i),1}).^2.*...
-%             ((T_film_plot{1:Hmin_I(i),i+1}-T_film_plot{2:Hmin_I(i)+1,i+1})/1000))...
-%             + pi*T_film_plot{Hmin_I(i),1}^2*(T_film_plot{Hmin_I(i),i+1}/1000);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        
-%         sum(pi*r^2*delta dimp H) + pi*r^2 @ rim * min H;
-%         SA_cyl(i) = 2*pi*Rrim(i)*(Hmin(i)/1000)+2*pi*(Rrim(i))^2;
 
-%         SA_cyl(i) = 2*pi*Rrim(i)*(Hmin(i)/1000);
-        SA_cyl(i) = 2*pi*Rrim(1)*(Hmin(i)/1000);
+        SA_cyl{i} = 2*pi.*radius_bar{i}.*(height_bar{i}/1000);
+        
     end
     
-    flowRate = diff(dimpVol)./(diff(timeStamp_plot));
-    flowRate(numFilms) = NaN;
+    for i = 1:numFilms-1
+        for j = 1:length(dimpVol{i})
+            if i==1
+            flowRate{i,1}(j,1) = (sum(dimpVol{i+1}(1:j)) - sum(dimpVol{i}(1:j))) /...
+                (timeStamp_plot(i+1)-timeStamp_plot(i));
+%     = diff(dimpVol)./(diff(timeStamp_plot));
+            else
+                
+                flowRate{i,1}(j,1) = (sum(dimpVol{i+1}(1:j)) - sum(dimpVol{i-1}(1:j))) /...
+                (timeStamp_plot(i+1)-timeStamp_plot(i-1));
+            end
+        end
+        shearRate{i,1} = -6*(flowRate{i}./(SA_cyl{i}/2+SA_cyl{i+1}/2))./...
+            ((height_bar{i}/2+height_bar{i+1}/2)/1000);
+        
+%         maxShear(i) = 
+%         dimpVol_rim(i) =
+%         maxFlow(i) = 
+    end
+%     flowRate(numFilms) = NaN;
     
 % CHANGE TO CENTRAL DIFFERENCING
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +274,9 @@ if film_analyser == 1
 %     
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    shearRate = -(flowRate./SA_cyl)./(Hmin/2000); % ?????????????
+% SA_cyl_ave = (SA_cyl(1:end-1)+SA_cyl(2:end))/2;
+% Hmin_ave = (Hmin(1:end-1)+Hmin(2:end))/2;
+% shearRate = -(flowRate./SA_cyl_ave)./(Hmin_ave/2000); % ?????????????
     % Note convert height to micron and divide by 2
     
     % if exist('T','var')
@@ -279,6 +287,9 @@ if film_analyser == 1
     
     if save_check == 1
         
+        T_film_shear = table(radius_bar{1}, shearRate{1:end},...
+            'VariableNames', ['radius_bar',T_film_plot.Properties.VariableNames(2:end-1)]);
+        
         T_film_metrics = table(fileNum_plot,timeStamp_plot,round(Hcent,4),...
             round(Hmin,4),round(Rrim,4),...
             round(dimpVol,4),round(flowRate,4),round(shearRate,4),...
@@ -288,13 +299,16 @@ if film_analyser == 1
         
         if load_check == 0
             file_name_metrics = strcat(film_plot_file(1:end-4), '-metrics');
+            file_name_shear = strcat(film_plot_file(1:end-4), '-shearRate');
         
         else
             file_name = strcat(conc, sample, '-',expNum, '-films-plot', version);
             file_name_metrics = strcat(file_name, '-metrics');
+            file_name_shear = strcat(file_name, '-shearRate');
         end
         
         saveData(T_film_metrics, film_plot_path, file_name_metrics);
+        saveData(T_film_metrics, film_plot_path, file_name_shear);
     end 
 end
 %--------------------------------------------------------------------------
