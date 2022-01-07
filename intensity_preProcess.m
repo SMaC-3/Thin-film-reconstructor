@@ -6,21 +6,25 @@ format bank
 %--------------------------------------------------------------------------
 
 %---Main branch directory info---------------------------------------------
-conc = '';
-sample = 'Ethylene_glycol';
-abbre = 'EG';
-expNum = 'run2';
-branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
+%
+% conc = '';
+% sample = 'Ethylene_glycol';
+% abbre = 'EG';
+% expNum = 'run2';
+% branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
 
-folder = fullfile(branch, sample, strcat(conc,abbre),...
-    strcat(conc,abbre,'_',expNum,'/'));
-folder = fullfile(branch, sample,...
-    strcat(conc,abbre,'_',expNum,'/')); 
-csvFile = strcat(conc, abbre,'_',expNum,'_TimeStamps.csv');
-%--------------------------------------------------------------------------
+% folder = fullfile(branch, sample, strcat(conc,abbre),...
+%     strcat(conc,abbre,'_',expNum,'/'));
+% folder = fullfile(branch, sample,...
+%     strcat(conc,abbre,'_',expNum,'/')); 
+% csvFile = strcat(conc, abbre,'_',expNum,'_TimeStamps.csv');
+folder = "/Volumes/ZIGGY/Thin films/MultiCam/CNC_dialysed/1p9wtCNC/1p9wtCNC_run4/";
+csvFile = "1p9wtCNC_run4_TimeStamps.csv";
+
+%-------------------------------------------------------------------------
 
 %---Index of files to be procesed------------------------------------------
-selected = [500:500:2500];
+selected = [400:10:3360];
 % selected = flip(selected);
 save_check = 1; % 1 = save info, 0 = do not save info 
 %--------------------------------------------------------------------------
@@ -64,7 +68,7 @@ figure(1)
 imshow(img_data)
 
 [center, radius] = intensity_houghTransform(img_data);
-% center = [270, 247];
+% center = [261, 255];
 % radius = [0 ];
 %--------------------------------------------------------------------------
 
