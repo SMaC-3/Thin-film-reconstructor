@@ -2,12 +2,12 @@ function [T_export] =  intensity_dataReduction(radial_data, red_int, blue_int)
 %--------------------------------------------------------------------------
 % Identify red & blue maxima/minima within bounds
 %--------------------------------------------------------------------------
-
-[red_I_min, red_I_max, red_min, red_max] = ...
-    intensity_maxMin(radial_data, red_int);
-
-[blue_I_min, blue_I_max, blue_min, blue_max] = ...
-    intensity_maxMin(radial_data, blue_int);
+% 
+% [red_I_min, red_I_max, red_min, red_max] = ...
+%     intensity_maxMin(radial_data, red_int);
+% 
+% [blue_I_min, blue_I_max, blue_min, blue_max] = ...
+%     intensity_maxMin(radial_data, blue_int);
 
 %--------------------------------------------------------------------------
 % Correct for uneven illumination
