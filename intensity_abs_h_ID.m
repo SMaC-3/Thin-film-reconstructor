@@ -1,5 +1,5 @@
 function [radius, dimp_h_red, dimp_h_blue, save_abs_h] =...
-    intensity_abs_h_ID(T_data)
+    intensity_abs_h_ID(T_data, pre_T_dimp)
 
 %--------------------------------------------------------------------------
 % Define intensity profile & peak info for red and blue
@@ -29,10 +29,10 @@ blue_dimp = find(blue_ind == find(T_data.blue_I_dimp == 1));
 
 lamb_red = 630;
 lamb_blue = 450;
-% n1 = 1.33; % refractive index of water 
+n1 = 1.33; % refractive index of water 
 % n1 = 1.43; % refractive index of glycol
-n1 = 1; % refractive index of air
-
+% n1 = 1; % refractive index of air
+% n1 = ;
 disp(strcat("refractive index ",num2str(n1))  );
 %--------------------------------------------------------------------------
 % Find film thickness for red & blue at points of max/min intensity.
@@ -53,39 +53,88 @@ blue_co = find(blue_co_I);
 % Find index of common minimum or maximum red & blue 
 %--------------------------------------------------------------------------
 
+if isempty(pre_T_dimp)
 
-figure(5)
-plot(radius, blue_norm, 'blue', 'LineWidth', 2)
-hold on
-scatter(radius(blue_ind), blue_norm(blue_ind), 200, 'black', 'filled')
-
-for k = 1:length(blue_ind)
+    figure(5)
+    plot(radius, blue_norm, 'blue', 'LineWidth', 2)
+    hold on
+    scatter(radius(blue_ind), blue_norm(blue_ind), 200, 'black', 'filled')
     
-    text(radius(blue_ind(k)), blue_norm(blue_ind(k))-0.05,num2str(k),'Color', 'blue')
+    for k = 1:length(blue_ind)
+        
+        text(radius(blue_ind(k)), blue_norm(blue_ind(k))-0.05,num2str(k),'Color', 'blue')
+        
+    end
     
-end
-
-plot(radius, red_norm, 'red', 'LineWidth', 2)
-scatter(radius(red_ind), red_norm(red_ind), 200, 'black', 'filled')
-
-for k = 1:length(red_ind)
+    plot(radius, red_norm, 'red', 'LineWidth', 2)
+    scatter(radius(red_ind), red_norm(red_ind), 200, 'black', 'filled')
     
-    text(radius(red_ind(k)), red_norm(red_ind(k))-0.1,num2str(k),'Color', 'red')
+    for k = 1:length(red_ind)
+        
+        text(radius(red_ind(k)), red_norm(red_ind(k))-0.1,num2str(k),'Color', 'red')
+        
+    end
+    hold off
     
-end
-hold off
-
-prompt_absH_b = 'Identify index of common stationary point in blue channel: ';
-prompt_absH_r = 'Identify index of common stationary point in red channel: ';
-p_absH_b = input(prompt_absH_b);
-while isempty(p_absH_b)
+    prompt_absH_b = 'Identify index of common stationary point in blue channel: ';
+    prompt_absH_r = 'Identify index of common stationary point in red channel: ';
     p_absH_b = input(prompt_absH_b);
-end
-p_absH_r = input(prompt_absH_r);
-while isempty(p_absH_r)
-    p_absH_r = input(prompt_absH_r);
-end
+    while isempty(p_absH_b)
+        p_absH_b = input(prompt_absH_b);
+    end
+    
+    if p_absH_b < 1
+        p_absH_r = input(prompt_absH_r);
+        while isempty(p_absH_r)
+            p_absH_r = input(prompt_absH_r);
+        end
+    else
+        [~,p_absH_r] =  min(abs(red_ind - blue_ind(p_absH_b)));
+    end
 
+else
+   
+    red_minn = red_sp_h([2:2:length(red_sp_h)]);
+    red_maxx = red_sp_h([3:2:length(red_sp_h)]);
+%     if red_max_min(red_dimp -1) == 0
+    if red_max_min(red_dimp) == 1
+       [~, red_near_sp] =  min(abs(red_minn- min(pre_T_dimp.red_film) ));
+       red_near_sp = red_near_sp*2;
+    else
+        [~, red_near_sp] =  min(abs(red_maxx- min(pre_T_dimp.red_film) ));
+       red_near_sp = red_near_sp*2 + 1;
+    end
+    
+    red_dif_co = red_co - red_near_sp;
+    [red_near_co, ~] = min(red_dif_co(red_dif_co>0));
+    
+    p_absH_r = red_dimp -1 -red_near_co;
+    
+    
+    blue_minn = blue_sp_h([2:2:length(blue_sp_h)]);
+    blue_maxx = blue_sp_h([3:2:length(blue_sp_h)]);
+    
+%     if blue_max_min(blue_dimp - 1) == 0
+if blue_max_min(blue_dimp) == 1
+    [~, blue_near_sp] =  min(abs(blue_minn- min(pre_T_dimp.blue_film) ));
+    blue_near_sp = blue_near_sp*2;
+else
+    [~, blue_near_sp] =  min(abs(blue_maxx- min(pre_T_dimp.blue_film) ));
+    blue_near_sp = blue_near_sp*2 + 1;
+end
+    
+    blue_dif_co = blue_co - blue_near_sp;
+    [blue_near_co, ~] = min(blue_dif_co(blue_dif_co>0));
+    
+    p_absH_b = blue_dimp -1 -blue_near_co;
+    
+%     if p_absH_r > 0
+%         [~,p_absH_b] = min(abs(blue_ind-blue_ind(p_absH_r)));
+%     else
+%         
+%     end
+    
+end
 %--------------------------------------------------------------------------
 % Count back from common sp to index one inside dimple to assign height
 %--------------------------------------------------------------------------
@@ -98,7 +147,14 @@ end
 
 if blue_max_min(blue_dimp-check_sp+1) == 0 %common min, counting backwards b/c reverse order
     check = 'Is this the 1st common min (~592 nm) or 2nd common min (~1776 nm)? 1/2 : ';
-    min_check = input(check);
+
+    if isempty(pre_T_dimp)
+        min_check = input(check);
+    elseif min(pre_T_dimp.blue_film) < blue_sp_h(blue_co(2))
+       min_check = 1;
+    else
+        min_check = input(check);
+    end
     
     while isempty(min_check)
         min_check = input(check);
