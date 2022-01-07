@@ -17,7 +17,7 @@ function [center, radius] = intensity_houghTransform(img_data)
 object = 'bright';
 sensitivity = 0.985;
 
-r1 = 50;
+r1 = 120;
 r2 = r1+20;
 
 %--------------------------------------------------------------------------
