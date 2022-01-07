@@ -1,4 +1,4 @@
-close all
+%close all
 
 %--------------------------------------------------------------------------
 % Import information - USER TO MODIFY
@@ -9,26 +9,41 @@ save_check = 1; % 1 = save info, 0 = do not save info
 %--------------------------------------------------------------------------
 
 %---Set script mode--------------------------------------------------------
-film_selector = 0;
+film_selector = 1; %ADD ability to splice red & blue channels together
 film_analyser = 1;
-film_plotter = 0;
+film_plotter = 1;
 %--------------------------------------------------------------------------
+%---power-law exponent-----------------------------------------------------------------------
+
+n=1;
+m = 0.2; % Flow consistency index in Pa.s^n
+R = 0.2; % Setting "R" in Winter paper to dimple radius, in um
 
 %---main branch directory info---------------------------------------------
-conc = '';
-sample = 'Ethylene_glycol';
-abbre = 'EG';
-expNum = 'run1';
-branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
 
 % folder = fullfile(branch, sample, strcat(conc,abbre),...
 %     strcat(conc,abbre,'_',expNum,'/'));
 % folder = fullfile(branch, sample,...
 %     strcat(conc,abbre,'_',expNum,'/')); 
+folder = "/Volumes/ZIGGY/Thin films/MultiCam/CNC_dialysed/1p9wtCNC/1p9wtCNC_run1/";
+csvFile = "1p9wtCNC_run1_TimeStamps.csv";
 
-folder='/Volumes/ZIGGY/Thin films/MultiCam/Ethylene_glycol/EG_run1/';
-csvFile = 'EG_run1_TimeStamps.csv';
+folder_parts = split(folder, '/');
+exp_parts = split(folder_parts{end-1},'_');
 
+sample = folder_parts{6};
+conc_parts = exp_parts(1:end-1);
+conc = join(conc_parts,'_',1);
+conc = conc{1};
+abbre = conc;
+expNum = exp_parts{end};
+
+
+% conc = '600ppm_Xgum_0p1mMKCl';
+% sample = '600ppm_Xgum_0p1mMKCl';
+% abbre = '600ppm_Xgum_0p1mMKCl';
+% expNum = 'run1';
+branch = '/Volumes/ZIGGY/Thin films/MultiCam/';
 
 if ~exist(folder,'dir')
     folder = pwd;
@@ -110,7 +125,8 @@ if film_selector == 1
         version = input(version_prompt,'s');
         version = strcat('-V',version);
         
-        file_name = strcat(conc, sample, '-',expNum, '-films-plot', version);
+        %file_name = strcat(conc, sample, '-',expNum, '-films-plot', version);
+        file_name = strcat(folder_parts(end-1), '-films-plot', version);
         
         T_film_plot = table(radius, film_plot_choice{1:end},...
             'VariableNames', ['radius', col_choice{1:end}]);
@@ -163,7 +179,7 @@ if film_analyser == 1
     
     if exist(csvRead,'file') == 2
         T = readtable(csvRead, 'Delimiter',',');
-        T(end, :) = [];
+%         T(end, :) = [];
         
     else
         disp("Select csv file");
@@ -171,7 +187,7 @@ if film_analyser == 1
             'Select timestamp file', 'MultiSelect','off');
         csvRead = strcat(timeStamp_file_path,csvFile);
         T = readtable(csvRead, 'Delimiter',',');
-        T(end, :) = [];
+%         T(end, :) = [];
     end
     
     %--------------------------------------------------------------------------
@@ -211,7 +227,7 @@ if film_analyser == 1
     dimpDrainageRate = zeros(numFilms,1);
     SA_cyl = cell(numFilms,1);
     
-    flowRate = cell(numFilms,1);
+    flowRate = cell(numFilms-1,1);
     
     fileNum_plot = zeros(numFilms,1);
     timeStamp_plot = zeros(numFilms,1);
@@ -255,9 +271,27 @@ if film_analyser == 1
                 (timeStamp_plot(i+1)-timeStamp_plot(i-1));
             end
         end
+        
         shearRate{i,1} = -6*(flowRate{i}./(SA_cyl{i}/2+SA_cyl{i+1}/2))./...
             ((height_bar{i}/2+height_bar{i+1}/2)/1000);
         
+        shearRate_power{i,1} = -(flowRate{i}./(2*pi)./(radius_bar{i}/2 + radius_bar{i+1}/2)).*...
+            ((2*n+1)/n).*(2./((height_bar{i}/2 + height_bar{i+1}/2)/1000)).^((1+n)/n);
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%% CHECK WITH JOE THAT BELOW IMPLEMENTATION OF PRESSURE EQUATION
+        %%%% IS CORRECT
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%         
+%       pressure{i,1} = ((2*n+1)/n)^n.*(flowRate{i}./(pi*R.*(height_bar{i}/2 + height_bar{i+1}/2)/1000)).^n...
+%           .*((2*m*R)./((height_bar{i}/2 + height_bar{i+1}/2)/1000).*(1-n)).*...
+%           (1-((radius_bar{i}/2 + radius_bar{i+1}/2)./R).^(1-n) );
+      
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+      
+      
+      
 %         maxShear(i) = 
 %         dimpVol_rim(i) =
 %         maxFlow(i) = 
@@ -287,28 +321,45 @@ if film_analyser == 1
     
     if save_check == 1
         
-        T_film_shear = table(radius_bar{1}, shearRate{1:end},...
+        T_film_shear = table(radius_bar{1}, shearRate_power{1:end},...
             'VariableNames', ['radius_bar',T_film_plot.Properties.VariableNames(2:end-1)]);
+        max_radius_I = max(Hmin_I);
+        dimpVol_rim = zeros(max(size(dimpVol)),1);
+        dimpVol_Hmin = zeros(max(size(dimpVol)),1);
+        for ii = 1:max(size(dimpVol))
+            dimpVol_rim(ii) = sum(dimpVol{ii}(1:max_radius_I));
+            dimpVol_Hmin(ii) = sum(dimpVol{ii}(1:Hmin_I(ii)));
+        end
+        
+        
+        max_dimpVol = cellfun(@max,dimpVol);
+        max_flowRate = cellfun(@max, flowRate);
+        max_flowRate(end+1) = NaN;
+        max_shearRate = cellfun(@max, shearRate);
+        max_shearRate(end+1) = NaN;
         
         T_film_metrics = table(fileNum_plot,timeStamp_plot,round(Hcent,4),...
             round(Hmin,4),round(Rrim,4),...
-            round(dimpVol,4),round(flowRate,4),round(shearRate,4),...
+            round(max_dimpVol,4),round(max_flowRate,4),round(max_shearRate,4),...
+            round(dimpVol_rim,4), round(dimpVol_Hmin,4),...
             'VariableNames', {'fileNum', 'timeStamp', 'Hcent_nm',...
-            'Hmin_nm', 'Rrim_micron', 'dimpVol_micron_cubed',...
-            'flowRate_micron_cubed_persec', 'shearRate_persec'});
+            'Hmin_nm', 'Rrim_micron', 'max_dimpVol_micron_cubed',...
+            'max_flowRate_micron_cubed_persec', 'max_shearRate_persec',...
+            'dimpVol_rim','dimpVol_Hmin'});
         
         if load_check == 0
             file_name_metrics = strcat(film_plot_file(1:end-4), '-metrics');
             file_name_shear = strcat(film_plot_file(1:end-4), '-shearRate');
         
         else
-            file_name = strcat(conc, sample, '-',expNum, '-films-plot', version);
+%             file_name = strcat(conc, sample, '-',expNum, '-films-plot', version);
+            file_name = strcat(folder_parts(end-1), '-films-plot', version);
             file_name_metrics = strcat(file_name, '-metrics');
             file_name_shear = strcat(file_name, '-shearRate');
         end
         
         saveData(T_film_metrics, film_plot_path, file_name_metrics);
-        saveData(T_film_metrics, film_plot_path, file_name_shear);
+        saveData(T_film_shear, film_plot_path, file_name_shear);
     end 
 end
 %--------------------------------------------------------------------------
@@ -368,12 +419,38 @@ if film_plotter == 1
         T_film_metrics = readtable(strcat(film_metrics_path,film_metrics_file));
     
     end
+    
+    if exist('T_film_shear','var') == 1
+        
+        load_check_prompt = 'Would you like to use currently loaded film shear table?: [1/0] ';
+        load_check = input(load_check_prompt);
+        
+        while isempty(load_check) == 1
+            load_check = input(load_check_prompt);
+        end
+    end
+    
+    if exist('T_film_shear','var') == 0 || load_check == 0
+    
+        %---Select files  manually for film plotting-------------------------
+        disp('Select film shear data');
+        [film_shear_file, film_shear_path] = uigetfile(strcat(folder,'*.txt'),...
+            'Select the thin film shear rate data to analyse', 'MultiSelect','off');
+        
+        % Turn off convert to cell b/c only one file
+%         if iscell(film_plot_file) == 0
+%             film_plot_file = {film_plot_file};
+%         end
+%         
+        T_film_shear = readtable(strcat(film_shear_path,film_shear_file));
+    
+    end
     %--------------------------------------------------------------------------
     % Make figures
     %--------------------------------------------------------------------------
     
     % make function to take tabulated input
-    film_plot(T_film_metrics, T_film_plot)
+    film_plot(T_film_metrics, T_film_plot,T_film_shear)
     
     if save_check == 1
         
@@ -396,6 +473,17 @@ if film_plotter == 1
        print('-f4', '-r300','-dpng',...
            fullfile(folder,film_plot_folder,strcat(abbre,'_',expNum,...
            '_Rdimp_',version,'.png')));
+       
+        print('-f5', '-r300','-dpng',...
+           fullfile(folder,film_plot_folder,strcat(abbre,'_',expNum,...
+           '_shearRate_',version,'.png')));
+       
+       if ishandle(6)
+           print('-f6', '-r300','-dpng',...
+               fullfile(folder,film_plot_folder,strcat(abbre,'_',expNum,...
+               '_dimpVol_',version,'.png')));
+           
+       end
     end
         
        
