@@ -21,3 +21,5 @@ testVars.mat
 *.zip
 *.xlsx
 *.mat
+
+intensity_lineAverage.m
