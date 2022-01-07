@@ -1,5 +1,5 @@
 function [T_dimp] =...
-    intensity_buildFilm(T_data)
+    intensity_buildFilm(T_data, pre_T_dimp)
 
 %--------------------------------------------------------------------------
 % Smooth data
@@ -13,7 +13,7 @@ function [T_dimp] =...
 %--------------------------------------------------------------------------
 
 [radius, dimp_h_red, dimp_h_blue, save_abs_h] =...
-    intensity_abs_h_ID(T_data);
+    intensity_abs_h_ID(T_data, pre_T_dimp);
 
 dimp_h_red = real(dimp_h_red);
 dimp_h_blue = real(dimp_h_blue);
