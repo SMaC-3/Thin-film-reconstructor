@@ -3,8 +3,8 @@ format bank
 % Define folder and csv file for data import
 %--------------------------------------------------------------------------
 
-folder = "/Volumes/ZIGGY/Thin films/MultiCam/CNC_dialysed/1p9wtCNC/1p9wtCNC_run4/";
-csvFile = "1p9wtCNC_run4_TimeStamps.csv";
+folder = "/Volumes/T7/Thin films/MultiCam/SDS/240mM_SDS/240mM_SDS_run20/";
+csvFile = "240mM_SDS_run20_TimeStamps.csv";
 
 save_check = 1;
 
@@ -13,21 +13,26 @@ save_check = 1;
 
 % delta T = fps * delata img number
 
-selected = [370:15:3360]; 
+% folder_to_save = '1st_rip';
+% folder_to_save = '2nd_rip';
+folder_to_save = '3rd_rip';
+% folder_to_save = '4th_rip';
+
+selected = [235:5:335]; 
 
 if save_check == 1
  
-if ~exist(strcat(folder, 'gif'),'dir')
-    mkdir(folder, 'gif');
+if ~exist(strcat(folder, folder_to_save),'dir')
+    mkdir(folder, folder_to_save);
 end
 end
 
-copyFile(folder, csvFile, selected);
+copyFile(folder, csvFile, selected,folder_to_save);
 
-function copyFile(folder, csvFile, selected)
+function copyFile(folder, csvFile, selected, folder_to_save)
 %RELATIVE FILE PATH
 % folder = '/Volumes/Z_MS-DOS/Thin films/MultiCam/CNC/6wtCNC/6wtCNC_run2/'; 
-img_folder = 'gif/';
+img_folder = strcat(folder_to_save,'/');
 img_path = strcat(folder, img_folder);
 
 % red_folder = 'red-tiff/';
@@ -85,7 +90,8 @@ parfor i = 1:length(selected)
 %     copyfile(strcat(red_path,red_files{i}), img_path);
 %     copyfile(strcat(blue_path,blue_files{i}), img_path);
       copyfile(strcat(rgb_path,rgb_files{i}), img_path);
-
+%       ima = imread(strcat(rgb_path,rgb_files{i}))
+%       imwrite(ima, strcat(img_path,rgb_files{i}(1:end-4),"jpg"),"BitDepth",16);
 end
 toc
 
