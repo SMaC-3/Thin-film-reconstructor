@@ -1,5 +1,5 @@
 function [radius, dimp_h_red, dimp_h_blue, save_abs_h] =...
-    intensity_abs_h_ID(T_data, pre_T_dimp)
+    intensity_abs_h_ID(T_data, phi_correction, pre_T_dimp)
 
 %--------------------------------------------------------------------------
 % Define intensity profile & peak info for red and blue
@@ -286,6 +286,24 @@ for i = 1:length(red_ind)-red_dimp
 end
 
 %--------------------------------------------------------------------------
+% ADD LINE HERE FOR PHASE OFFSET
+%--------------------------------------------------------------------------
+% NOTE: ZEROS ARE REPLACED BY NAN LATER, USE APPROPRIATE INDEXING TO AVOID
+% ERRORS LATER ON
+
+if phi_correction == 1
+    
+    dimp_h_red(1:red_ind(end)) = dimp_h_red(1:red_ind(end)) - (lamb_red/(4*pi*n1))*pi;
+
+end
+
+
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
+
+%--------------------------------------------------------------------------
 %--------------------------------------------------------------------------
 % blue channel film reconstruction
 %--------------------------------------------------------------------------
@@ -352,6 +370,23 @@ for i = 1:length(blue_ind)-blue_dimp
    end
        
 end
+
+%--------------------------------------------------------------------------
+% ADD LINE HERE FOR PHASE OFFSET
+%--------------------------------------------------------------------------
+% NOTE: ZEROS ARE REPLACED BY NAN LATER, USE APPROPRIATE INDEXING TO AVOID
+% ERRORS LATER ON
+
+if phi_correction == 1
+    
+    dimp_h_blue(1:blue_ind(end)) = dimp_h_blue(1:blue_ind(end)) - (lamb_blue/(4*pi*n1))*pi;
+
+end
+
+%--------------------------------------------------------------------------
+%--------------------------------------------------------------------------
+
+
 
 zap_red = find(dimp_h_red ==0);
 dimp_h_red(zap_red) = NaN;
