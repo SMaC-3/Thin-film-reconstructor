@@ -37,8 +37,8 @@ scatter([-T_film_plot.radius; T_film_plot.radius], [T_film_plot{:,i+1};T_film_pl
 end
 
 ax.YLim = [0, ax.YLim(2)];
-
-legend(string(round(T_film_metrics.timeStamp,1)), 'Box','off');
+leg_string = strcat(string(round(T_film_metrics.timeStamp,0)), repmat(" s", [max(size(T_film_metrics.timeStamp)),1]));
+legend(leg_string, 'Box','off');
 hold off
 
 %--------------------------------------------------------------------------
