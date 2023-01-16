@@ -1,7 +1,7 @@
 close all
 clearvars -except folder
 
-folder = '/Volumes/ZIGGY/Thin films/MultiCam/Xgum/600ppm_Xgum/600ppm_Xgum_0p1mMKCl_0p2umF_run10/';
+folder = "/Volumes/T7/Thin films/MultiCam/SDS/100mM_SDS/100mM_SDS_globalExtrema_run2/";
 
 folder_parts = split(folder, '/');
 
