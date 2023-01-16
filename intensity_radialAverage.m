@@ -1,13 +1,28 @@
-% close all;
-% clear all;
+% Code written by Joshua P. King, SMaCLab, Monash University, Australia
+% Last updated: August, 2022
 
-% --------------------------------------------------------------------------
-% Annular data extraction %
-% angle is measured with respect to the positive x-axis in a clock-wise
-% direction
+%   ________  ___      ___       __       ______   ___            __       _______   
+%  /"       )|"  \    /"  |     /""\     /" _  "\ |"  |          /""\     |   _  "\  
+% (:   \___/  \   \  //   |    /    \   (: ( \___)||  |         /    \    (. |_)  :) 
+%  \___  \    /\\  \/.    |   /' /\  \   \/ \     |:  |        /' /\  \   |:     \/  
+%   __/  \\  |: \.        |  //  __'  \  //  \ _   \  |___    //  __'  \  (|  _  \\  
+%  /" \   :) |.  \    /:  | /   /  \\  \(:   _) \ ( \_|:  \  /   /  \\  \ |: |_)  :) 
+% (_______/  |___|\__/|___|(___/    \___)\_______) \_______)(___/    \___)(_______/  
+                                                                                   
+
+% SMaCLab website can be found here:
+% https://sites.google.com/view/smaclab
+
+% -------------------------------------------------------------------------
+% INTENSITY_RADIALAVERAGE radially average intensity data in an image file
+% between angle bounds 
+
+% A positive angle is measured with respect to the positive x-axis in a
+% clock-wise direction
 % --------------------------------------------------------------------------
 
-function [bins, binaverage, r_max] = intensity_radialAverage(img_data, center, ang_min, ang_max, r_max, nbs)
+function [bins, binaverage, r_max] =...
+    intensity_radialAverage(img_data, center, ang_min, ang_max, r_max, nbs)
 
 % Set center of interference pattern using x and y index as determined by
 % circular Hough transform
@@ -55,9 +70,6 @@ ang(:,1:center(1)) = ang(:,1:center(1)) + pi;
 ang(1:center(2),center(1)+1:end) = ang(1:center(2),center(1)+1:end)+(2*pi);
 ang = ang.*(180/pi); % convert to degrees
 
-% ang_min = -180;
-% ang_max = 0;
-
 if ang_max > 360
     I_ang = ang >= ang_min & ang <= 360 | ang >= 0 & ang <= (ang_max-360);
 elseif ang_min < 0
@@ -67,18 +79,6 @@ elseif ang_min < 0
 else
     I_ang = ang >= ang_min & ang <= ang_max;
 end
-
-%Plots the sectioned data
-
-
-%Calculate the angles for the obtained points. Zero is twleve o clock (vertically up on y-axis)
-% for i = 1:length(annul_x)
-% if annul_y(i) > 0
-%     annul_ang(i) = atan(annul_x(i)/annul_y(i));
-% elseif annul_y(i) < 0
-%     annul_ang(i) = atan(annul_x(i)/annul_y(i)) + pi;    
-% end
-% end
 
 % Sort data in order of increasing radius
 
@@ -101,37 +101,8 @@ rad_val = double(rad_val);
 %Setting the bins
 
 area = pi*r_max^2;
-
-% nbs = round(1*r_max);
-
-% area_bin = area/nbs;
-% bins = zeros(1, nbs);
-% bins(2) = sqrt(area_bin/pi);
-% 
-% for i = 3:nbs
-%     bins(i) = sqrt((area_bin/(pi*bins(i-1)^2)+1))*bins(i-1);
-% end
-
 delr = r_max/nbs;
 bins = linspace(0,r_max,nbs);
-
-
-% exp_max = log(r_max);
-% loge_lin = exp(linspace(0, exp_max, nbs));
-% loge_diff = flip(diff(loge_lin));
-% bins = zeros(1,nbs);
-% bins(1) = 0;
-% for i = 1:nbs-1
-%     bins(i+1) = bins(i)+loge_diff(i);
-% end
-% 
-% log_bins = logspace(0,log10(300) , nbs);
-% log_diff = flip(diff(log_bins));
-% bins = zeros(1,nbs);
-% bins(1) = 0;
-% for i = 1:nbs-1
-%     bins(i+1) = bins(i)+log_diff(i);
-% end
 
 %Filling the bins
 binindex = zeros(1,nbs);
@@ -152,7 +123,7 @@ end
 binaverage = bintotal./binindex;
 bins = bins.';
 binaverage = binaverage.';
-% 
+
 % figure(2)
 % hold on
 % scatter(bins, binaverage, 100, 'black','filled')
