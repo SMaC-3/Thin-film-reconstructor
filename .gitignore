@@ -23,5 +23,10 @@ testVars.mat
 *.mat
 *.asv
 *.ijm
+*.m~
 
+AnnularSectorExtraction_180320.m
+intensity_errorEstimate.m
 intensity_lineAverage.m
+intensity_preProcess_mulltiSlice.m
+fig_format.m
