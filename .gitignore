@@ -21,5 +21,7 @@ testVars.mat
 *.zip
 *.xlsx
 *.mat
+*.asv
+*.ijm
 
 intensity_lineAverage.m
