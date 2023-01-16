@@ -1,3 +1,20 @@
+% Code written by Joshua P. King, SMaCLab, Monash University, Australia
+% 2022
+
+%   ________  ___      ___       __       ______   ___            __       _______   
+%  /"       )|"  \    /"  |     /""\     /" _  "\ |"  |          /""\     |   _  "\  
+% (:   \___/  \   \  //   |    /    \   (: ( \___)||  |         /    \    (. |_)  :) 
+%  \___  \    /\\  \/.    |   /' /\  \   \/ \     |:  |        /' /\  \   |:     \/  
+%   __/  \\  |: \.        |  //  __'  \  //  \ _   \  |___    //  __'  \  (|  _  \\  
+%  /" \   :) |.  \    /:  | /   /  \\  \(:   _) \ ( \_|:  \  /   /  \\  \ |: |_)  :) 
+% (_______/  |___|\__/|___|(___/    \___)\_______) \_______)(___/    \___)(_______/  
+                                                                                   
+
+% SMaCLab website can be found here:
+% https://sites.google.com/view/smaclab
+
+% -------------------------------------------------------------------------
+
 %close all
 
 %--------------------------------------------------------------------------
@@ -9,14 +26,21 @@ save_check = 1; % 1 = save info, 0 = do not save info
 %--------------------------------------------------------------------------
 
 %---Set script mode--------------------------------------------------------
-film_selector = 1; %ADD ability to splice red & blue channels together
-film_analyser = 1;
+film_selector = 1; 
+film_analyser = 1; % Volume, flow rate, shear rate, min height, centre height, rim radius
+
+
 film_plotter = 1;
+
+% TO DO: Add ability to turn on/off various metrics and corresponding plot
+% break up analyser and plotter into separate functions for each metric?
+
+
 %--------------------------------------------------------------------------
-%---power-law exponent-----------------------------------------------------------------------
+%---power-law exponent-----------------------------------------------------
 
 n=1;
-m = 0.2; % Flow consistency index in Pa.s^n
+m = 1.1; % Flow consistency index in Pa.s^n
 R = 0.2; % Setting "R" in Winter paper to dimple radius, in um
 
 %---main branch directory info---------------------------------------------
@@ -25,8 +49,9 @@ R = 0.2; % Setting "R" in Winter paper to dimple radius, in um
 %     strcat(conc,abbre,'_',expNum,'/'));
 % folder = fullfile(branch, sample,...
 %     strcat(conc,abbre,'_',expNum,'/')); 
-folder = "/Volumes/ZIGGY/Thin films/MultiCam/CNC_dialysed/1p9wtCNC/1p9wtCNC_run1/";
-csvFile = "1p9wtCNC_run1_TimeStamps.csv";
+folder = "/Volumes/T7/Thin films/MultiCam/SDS/50mM_SDS/50mM_SDS_run4/";
+csvFile = "50mM_SDS_run4_TimeStamps.csv";
+
 
 folder_parts = split(folder, '/');
 exp_parts = split(folder_parts{end-1},'_');
@@ -80,7 +105,7 @@ if film_selector == 1
     for i = 1:size(film_files,2)
         T_film = readtable(strcat(film_path, film_files{i}));
         file_parts = split(film_files{i},{'-','.'});
-        fileNum = num2str(str2num(file_parts{4}));
+        fileNum = num2str(str2num(file_parts{4})-i); %%%% CORRECT BACK remove +i
         
         radius = T_film.radius;
         red_film = T_film.red_film;
@@ -450,6 +475,10 @@ if film_plotter == 1
     %--------------------------------------------------------------------------
     
     % make function to take tabulated input
+    
+    T_film_shear = table(radius_bar{1}, shearRate_power{1:end},...
+'VariableNames', ['radius_bar',T_film_plot.Properties.VariableNames(2:end-1)]);
+
     film_plot(T_film_metrics, T_film_plot,T_film_shear)
     
     if save_check == 1
