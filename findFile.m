@@ -1,14 +1,43 @@
-function [red_data, red_files, red_path, blue_data, blue_files, blue_path, num_imgs] = findFile(folder, csvFile, selected)
+% Code written by Joshua P. King, SMaCLab, Monash University, Australia
+% 2022
+
+%   ________  ___      ___       __       ______   ___            __       _______   
+%  /"       )|"  \    /"  |     /""\     /" _  "\ |"  |          /""\     |   _  "\  
+% (:   \___/  \   \  //   |    /    \   (: ( \___)||  |         /    \    (. |_)  :) 
+%  \___  \    /\\  \/.    |   /' /\  \   \/ \     |:  |        /' /\  \   |:     \/  
+%   __/  \\  |: \.        |  //  __'  \  //  \ _   \  |___    //  __'  \  (|  _  \\  
+%  /" \   :) |.  \    /:  | /   /  \\  \(:   _) \ ( \_|:  \  /   /  \\  \ |: |_)  :) 
+% (_______/  |___|\__/|___|(___/    \___)\_______) \_______)(___/    \___)(_______/  
+                                                                                   
+
+% SMaCLab website can be found here:
+% https://sites.google.com/view/smaclab
+
+%--------------------------------------------------------------------------
+
+% function [red_data, red_files, blue_data, blue_files, num_imgs] =...
+%     findFile(folder, red_path, blue_path, csvFile, selected)
+function [img_data, img_files, num_imgs] =...
+    findFile(folder, img_path, csvFile, selected, channel)
+
+%--------------------------------------------------------------------------
+% FINDFILE read blue and red tiff image data 
+ % return data, path, filenames, and number of selected images for further
+ % processing
+%--------------------------------------------------------------------------
 
 %--------------------------------------------------------------------------
 % Build relative file path
 %--------------------------------------------------------------------------
 
-red_folder = 'red-tiff/';
-blue_folder = 'blue-tiff/';
+% red_folder = '';
+% blue_folder = '';
 
-red_path = strcat(folder, red_folder);
-blue_path = strcat(folder, blue_folder);
+% red_folder = 'red-globalExtrema-tiff/';
+% blue_folder = 'blue-globalExtrema-tiff/';
+
+% red_path = strcat(folder, red_folder);
+% blue_path = strcat(folder, blue_folder);
 
 %---load csv data----------------------------------------------------------
 csvRead = strcat(folder, csvFile);
@@ -26,37 +55,42 @@ end
 % Define table info
 %--------------------------------------------------------------------------
 nameID = T.Index;
-red_names = T.red_file_names;
-blue_names = T.blue_file_names;
-sample = T.sample;
-cam = T.camera;
-fileNum = T.fileNum;
-secs = T.secs;
-cyCount = T.cyCount;
-cyOff = T.cyOff;
+if channel == "red"
+    img_names = T.red_file_names;
+elseif channel == "blue"
+    img_names = T.blue_file_names;
+elseif channel == "rgb"
+    img_names_red = T.red_file_names;
+    img_split = cellfun(@split, split(img_names_red,'red_'));
+    img_names = img_split(:,2);
+else
+    error("colour channel not recognised");
+end
+% sample = T.sample;
+% cam = T.camera;
+% fileNum = T.fileNum;
+% secs = T.secs;
+% cyCount = T.cyCount;
+% cyOff = T.cyOff;
 
 %--------------------------------------------------------------------------
 num_imgs = length(selected);
 %--------------------------------------------------------------------------
 if selected == 0
     % select all files
-    red_files = red_names;
-    blue_files = blue_names;
+    img_files = img_names;
     
 else
     for i = 1:length(selected)
     choose(i) = find(nameID==selected(i));
     end
-    red_files = {red_names{choose}};
-    blue_files = {blue_names{choose}};
+    img_files = {img_names{choose}};
 end
 
-red_data = cell(num_imgs,1);
-blue_data = cell(num_imgs,1);
+img_data = cell(num_imgs,1);
 
-for i =1:num_imgs
-   red_data{i} = imread(strcat(red_path, red_files{i})); 
-   blue_data{i} = imread(strcat(blue_path, blue_files{i}));
+parfor i =1:num_imgs
+   img_data{i} = imread(fullfile(img_path, img_files{i})); 
 end
 
 end
